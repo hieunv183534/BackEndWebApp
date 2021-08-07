@@ -1,94 +1,94 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
-using Dapper;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebApp.Controllers
 {
     /// <summary>
-    /// Api danh mục khách hàng
-    /// Author: hieunv 31/07/2021
+    /// Api danh mục nhân viên
+    /// Author hieunv (06/08/2021)
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class EmployeesController : ControllerBase
     {
-
         IDbConnection dbConnection = DatabaseConnection.DbConnection;
         /// <summary>
-        /// Lấy toàn bộ danh sách khách hàng
+        /// Lấy toàn bộ danh sách nhân viên
         /// </summary>
         /// <returns>Danh sách khách hàng</returns>
-        /// Author hieunv 03/08/2021
+        /// Author hieunv 06/08/2021
         [HttpGet]
         public IActionResult Get()
         {
-            var sql = "select * from Customers";
-            var customers = dbConnection.Query<Customer>(sql);
+            var sql = "select * from Employees";
+            var employees = dbConnection.Query<Employees>(sql);
 
-
-            //List<Customer> customers = new List<Customer>();
+            var response = StatusCode(200, employees);
+            //List<Employees> employees = new List<Employees>();
             //for (int i = 1; i <= 100; i++)
             //{
-            //    Customer customer = new Customer(i, RandomProperty.NewDebit(), RandomProperty.NewCustomerTypeId(), RandomProperty.NewFullName(), RandomProperty.NewDOB(), RandomProperty.NewGender(), RandomProperty.NewAddress(), RandomProperty.NewEmail(), RandomProperty.NewPhoneNumber());
-            //    customers.Add(customer);
+            //    Employees employee = new Employees(i, RandomProperty.NewIdentityNumber(), RandomProperty.NewPositionId(), RandomProperty.NewSalary(),
+            //        RandomProperty.NewJoinDate(), RandomProperty.NewWorkStatus(), RandomProperty.NewFullName(), RandomProperty.NewDOB(),
+            //        RandomProperty.NewGender(), RandomProperty.NewAddress(), RandomProperty.NewEmail(), RandomProperty.NewPhoneNumber());
+            //    employees.Add(employee);
             //}
 
 
+            return response;
 
-            return Ok(customers);
         }
 
         /// <summary>
-        /// Lấy thông tin khách hàng theo id
+        /// Lấy thông tin nhân viên theo id
         /// </summary>
-        /// <param name="CustomerId"></param>
-        /// <returns>Khách hàng</returns>
-        /// Author hieunv 03/08/2021
-        [HttpGet("{CustomerId}")]
-        public IActionResult Get(int CustomerId)
+        /// <param name="EmployeeId"></param>
+        /// <returns>Nhân viên</returns>
+        /// Author hieunv 06/08/2021
+        [HttpGet("{EmployeeId}")]
+        public IActionResult Get(int EmployeeId)
         {
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@CustomerId", CustomerId);
-            var sql = $"select * from Customers where CustomerId= @CustomerId";
-            var customer = dbConnection.QueryFirstOrDefault(sql, param: parameters);
-            return Ok(customer);
+            parameters.Add("@EmployeeId", EmployeeId);
+            var sql = $"select * from Employees where EmployeeId= @EmployeeId";
+            var employee = dbConnection.QueryFirstOrDefault(sql, param: parameters);
+            return Ok(employee);
         }
 
         /// <summary>
-        /// Lấy mã khách hàng
+        /// Lấy mã nhân viên mới
         /// </summary>
-        /// <returns>mã khách hàng lớn nhất có trong csdl</returns>
-        [HttpGet("NewCustomerId")]
+        /// <returns>mã nhân viên lớn nhất có trong csdl</returns>
+        [HttpGet("NewEmployeeId")]
         public IActionResult Get(string a)
         {
-            var sql = "select top 1 CustomerId from Customers order by CustomerId desc";
-            var customer = dbConnection.QueryFirstOrDefault(sql);
-            var newCustomerId = customer.CustomerId + 1;
-            return Ok(newCustomerId);
+            var sql = "select top 1 EmployeeId from Employees order by EmployeeId desc";
+            var employee = dbConnection.QueryFirstOrDefault(sql);
+            var newEmployeeId = employee.EmployeeId + 1;
+            return Ok(newEmployeeId);
         }
 
 
         /// <summary>
-        /// Thêm mới một khách hàng vào database
+        /// Thêm mới một nhân viên vào database
         /// </summary>
-        /// <param name="customer"></param>
+        /// <param name="employee"></param>
         /// <returns>số hàng được thêm thành công</returns>
         [HttpPost]
-        public IActionResult Post([FromBody] Customer customer)
+        public IActionResult Post([FromBody] Employees employee)
         {
-
             /// complete sql String
             var colNames = string.Empty;
             var colParams = string.Empty;
             // đọc từng property
-            var properties = customer.GetType().GetProperties();
+            var properties = employee.GetType().GetProperties();
 
             DynamicParameters parameters = new DynamicParameters();
             // duyệt từng property
@@ -100,7 +100,7 @@ namespace WebApp.Controllers
 
 
                 // lấy value prop
-                var propValue = prop.GetValue(customer);
+                var propValue = prop.GetValue(employee);
 
                 // lấy kiểu prop
                 var propType = prop.PropertyType;
@@ -111,12 +111,10 @@ namespace WebApp.Controllers
                 colParams += $"@{propName},";
 
             }
-
             colNames = colNames.Remove(colNames.Length - 1, 1);
             colParams = colParams.Remove(colParams.Length - 1, 1);
 
-            var sql = $"insert into Customers({colNames}) values( {colParams} ) ";
-
+            var sql = $"insert into Employees({colNames}) values( {colParams} ) ";
             var rowAffects = dbConnection.Execute(sql, param: parameters);
 
             var response = StatusCode(200, rowAffects);
@@ -131,12 +129,12 @@ namespace WebApp.Controllers
         /// <param name="customer"> lấy từ body</param>
         /// <returns>1 nếu sửa thành công và 0 là ngược lại</returns>
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute] int id, [FromBody] Customer customer)
+        public IActionResult Put([FromRoute] int id, [FromBody] Employees employee)
         {
             /// complete sql String
             var cols = string.Empty;
             // đọc từng property
-            var properties = customer.GetType().GetProperties();
+            var properties = employee.GetType().GetProperties();
 
             DynamicParameters parameters = new DynamicParameters();
             // duyệt từng property
@@ -148,7 +146,7 @@ namespace WebApp.Controllers
 
 
                 // lấy value prop
-                var propValue = prop.GetValue(customer);
+                var propValue = prop.GetValue(employee);
 
                 // lấy kiểu prop
                 var propType = prop.PropertyType;
@@ -159,7 +157,7 @@ namespace WebApp.Controllers
 
             }
             cols = cols.Remove(cols.Length - 1, 1);
-            var sql = $"update Customers set {cols} where CustomerId = {id}";
+            var sql = $"update Employees set {cols} where EmployeeId = {id}";
             var rowAffects = dbConnection.Execute(sql, param: parameters);
 
             var response = StatusCode(200, rowAffects);
@@ -167,14 +165,14 @@ namespace WebApp.Controllers
         }
 
         /// <summary>
-        /// Xóa một khách hàng theo CustomerId
+        /// Xóa một nhân viên theo CustomerId
         /// </summary>
         /// <param name="id"></param>
         /// <returns>1 nếu xóa thành công và 0 là ngược lại</returns>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var sql = $"delete from Customers where CustomerId = {id}";
+            var sql = $"delete from Employees where EmployeeId = {id}";
             var rowAffects = dbConnection.Execute(sql);
             var response = StatusCode(200, rowAffects);
             return response;

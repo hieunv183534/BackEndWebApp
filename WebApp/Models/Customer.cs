@@ -13,7 +13,7 @@ namespace WebApp.Models
         #region Field
         private int customerId;
         private int debit;
-        private int cutomerTypeId;
+        private string cutomerTypeId;
         #endregion
 
         #region Constructor
@@ -28,7 +28,7 @@ namespace WebApp.Models
             this.customerId = customerId;
         }
 
-        public Customer(int customerId, int debit, int cutomerTypeId, string fullName,
+        public Customer(int customerId, int debit, string cutomerTypeId, string fullName,
             DateTime dateOfBirth, int gender, string address, string email, string phoneNumber)
             : base(fullName, dateOfBirth, gender, address, email, phoneNumber)
         {
@@ -62,7 +62,7 @@ namespace WebApp.Models
         /// <summary>
         /// Mã loại khách hàng
         /// </summary>
-        public int CustomerTypeId
+        public string CustomerTypeId
         {
             get { return cutomerTypeId; }
             set { cutomerTypeId = value; }

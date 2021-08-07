@@ -14,7 +14,8 @@ namespace WebApp.Models
 
         private int itemId;
         private string itemName;
-        private int price;
+        private int itemPrice;
+        private string itemInfo;
 
         #endregion
 
@@ -25,11 +26,12 @@ namespace WebApp.Models
 
         }
 
-        public Items(int itemId, string itemName, int price)
+        public Items(int itemId, string itemName, int itemPrice, string itemInfo)
         {
             this.itemId = itemId;
             this.itemName = itemName;
-            this.price = price;
+            this.itemPrice = itemPrice;
+            this.itemInfo = itemInfo;
         }
 
         #endregion
@@ -57,10 +59,16 @@ namespace WebApp.Models
         /// <summary>
         /// Giá mặt hàng
         /// </summary>
-        public int Price
+        public int ItemPrice
         {
-            get { return price; }
-            set { price = value; }
+            get { return itemPrice; }
+            set { itemPrice = value; }
+        }
+
+        public string ItemInfo
+        {
+            get { return itemInfo; }
+            set { itemInfo = value; }
         }
 
         #endregion

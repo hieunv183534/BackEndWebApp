@@ -12,7 +12,7 @@ namespace WebApp.Models
     {
         #region Field
 
-        private int customerTypeId;
+        private string customerTypeId;
         private string customerTypeName;
         private float offerCoefficient;
 
@@ -25,7 +25,7 @@ namespace WebApp.Models
 
         }
 
-        public CustomerTypes(int customerTypeId, string customerTypeName, float offerCoefficient)
+        public CustomerTypes(string customerTypeId, string customerTypeName, float offerCoefficient)
         {
             this.customerTypeId = customerTypeId;
             this.customerTypeName = customerTypeName;
@@ -39,7 +39,7 @@ namespace WebApp.Models
         /// <summary>
         /// Mã loại khách hàng
         /// </summary>
-        public int CustomerTypeId
+        public string CustomerTypeId
         {
             get { return customerTypeId; }
             set { customerTypeId = value; }
